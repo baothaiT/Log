@@ -12,20 +12,23 @@ public static class LogExampleData
             Id = Guid.NewGuid(),
             ComponentName = "1+ComponentName+{Message}",
             Code = LogCodeEnum.Success,
-            Message = nameof(LogCodeEnum.Success)
+            Message = nameof(LogCodeEnum.Success),
+            StartDateTime = DateTime.Now
         },
         new LogEntity()
         {
             Id = Guid.NewGuid(),
             ComponentName = "2+ComponentName+{Message}",
             Code = LogCodeEnum.Success,
-            Message = nameof(LogCodeEnum.Success)
+            Message = nameof(LogCodeEnum.Success),
+            StartDateTime = DateTime.Now
         }
     };
     
     public static Task<List<LogEntity>> GetAllExampleData()
     {
-        return Task.FromResult(_log);
+        return Task.FromResult(_log.OrderByDescending(x => x.StartDateTime)
+           .ToList());
     }
 
     public static Task<LogEntity> CreateExampleData(LogEntity logEntity)
@@ -33,9 +36,10 @@ public static class LogExampleData
         LogEntity log = new LogEntity()
         {
             Id = Guid.NewGuid(),
-            ComponentName = $"ComponentName+{logEntity.Message}",
+            ComponentName = logEntity.ComponentName,
             Code = logEntity.Code,
-            Message = !string.IsNullOrEmpty(logEntity.Message)? logEntity.Message : nameof(LogCodeEnum.Success)
+            Message = logEntity.Code == LogCodeEnum.Success ? nameof(LogCodeEnum.Success) :(!string.IsNullOrEmpty(logEntity.Message)? logEntity.Message : nameof(LogCodeEnum.BadRequest)),
+            StartDateTime = DateTime.Now
         };
         _log.Add(log);
         return Task.FromResult(log);

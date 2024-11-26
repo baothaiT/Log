@@ -15,7 +15,25 @@ builder.Services.AddControllers(options =>
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SeverConnection"), b => b.MigrationsAssembly("Log.API")));
-    
+
+// Add CORS services to the container
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigins", policy =>
+    {
+        policy.WithOrigins("https://example.com") // Allow specific origin
+              .AllowAnyHeader()                  // Allow any header
+              .AllowAnyMethod();                 // Allow any HTTP method (GET, POST, etc.)
+    });
+
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()                  // Allow all origins
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -35,9 +53,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseRouting();
+
+// Enable CORS globally (for all endpoints)
+app.UseCors("AllowSpecificOrigins"); // or "AllowAll" based on your use case
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+
 
 app.MapControllers();
 app.Run();
