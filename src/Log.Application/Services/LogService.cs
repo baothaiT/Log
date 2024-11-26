@@ -24,12 +24,12 @@ public class LogService: ILogService
         return Task.CompletedTask;
     }
 
-    public Task<List<LogModel>> GetAll()
+    public async Task<List<LogModel>> GetAll()
     {
-        List<LogModel> logs = new List<LogModel>();
-        var logReponse = _logRepository.GetAll();
-        _mapper.Map(logReponse, logs);    
-        return Task.FromResult(logs) ;
+        Task<List<LogEntity>> logReponse = _logRepository.GetAll();
+        var logs = _mapper.Map<List<LogModel>>(logReponse.Result);
+        
+        return logs;
     }
 
     public Task<LogModel> Update(LogModel log)
@@ -41,5 +41,16 @@ public class LogService: ILogService
         LogModel logModel = new LogModel();
         _mapper.Map(logReponse, logModel);   
         return Task.FromResult(logModel);
+    }
+
+    // Method to map a list of Task<TSource> to Task<List<TDestination>>
+    static async Task<List<TDestination>> MapTaskListAsync<TSource, TDestination>
+        (List<Task<TSource>> taskList, IMapper mapper)
+    {
+        // Await all tasks to get the results
+        var results = await Task.WhenAll(taskList);
+
+        // Map the results to a list of the destination type
+        return results.Select(result => mapper.Map<TDestination>(result)).ToList();
     }
 }

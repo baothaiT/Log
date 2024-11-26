@@ -37,6 +37,7 @@ public static class LogExampleData
             Code = logEntity.Code,
             Message = !string.IsNullOrEmpty(logEntity.Message)? logEntity.Message : nameof(LogCodeEnum.Success)
         };
+        _log.Add(log);
         return Task.FromResult(log);
     }
 

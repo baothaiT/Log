@@ -13,10 +13,8 @@ public class LogProfile : Profile
 {
     public LogProfile()
     {
-         CreateMap<LogEntity, LogEntity>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore());
-
         CreateMap<LogEntity, LogModel>();
+
         CreateMap<LogModel, LogEntity>();
     }
 }

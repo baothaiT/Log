@@ -24,7 +24,8 @@ namespace CQRS.API.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            return Ok(_logService.GetAll());
+            Task<List<LogModel>> logs = _logService.GetAll();
+            return Ok(logs.Result);
         }
 
         [HttpPost]

@@ -22,9 +22,9 @@ public class LogRepository : ILogRepository
         return LogExampleData.CreateExampleData(logEntity);
     }
 
-    public Task<List<LogEntity>> GetAll()
+    public async Task<List<LogEntity>> GetAll()
     {
-        return LogExampleData.GetAllExampleData();
+        return  await LogExampleData.GetAllExampleData();
     }
 
     public Task<LogEntity> Update(LogEntity logEntity)
